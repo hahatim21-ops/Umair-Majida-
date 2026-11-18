@@ -21,6 +21,7 @@ export const FRAMES = [
 export const OVAL = { cx: 49.81, cy: 46.51, rx: 17.93, ry: 24.59 };
 
 // UM_5 – free band between "8:30 PM ONWARDS" and the candle clusters
+// UM_5 is shown from y 28.4% down (mantel removed, see style.css)
 export const UM5_BUTTONS = { x: 29, y: 66.6, w: 42, h: 15.4 };
 
 // Scroll cue on UM_2 (plain table front between the pillars)

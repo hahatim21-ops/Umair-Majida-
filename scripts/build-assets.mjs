@@ -59,6 +59,12 @@ async function cardImages() {
     if (!key.endsWith('blank')) {
       const bd = path.join(IMG, `${key}-bd.jpg`);
       let input = sharp(src);
+      if (key === 'um5') {
+        // the mantel above "Reception" is cropped off on the page, so leave it out here too
+        const m = await sharp(src).metadata();
+        const top = Math.round(m.height * 0.284);
+        input = sharp(await sharp(src).extract({ left: 0, top, width: m.width, height: m.height - top }).toBuffer());
+      }
       if (key === 'um4') {
         // hide the photo so the dark oval doesn't bleed into the backdrop before it's revealed
         const m = await sharp(src).metadata();

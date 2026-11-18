@@ -164,6 +164,10 @@ button { font: inherit; color: inherit; }
 .card__view { position: relative; aspect-ratio: var(--ar); }
 .card__view > .card-box { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 
+/* Reception card starts below the mantel (top 28.4% of UM_5 removed) */
+.sec--um5 .card__view { aspect-ratio: 1080 / 1374.72; overflow: hidden; }
+.sec--um5 .card__view > .card-box { height: 139.6648%; top: -39.6648%; }
+
 
 /* Painted text lines writing themselves in (see src/lib/lines.js) */
 .text-lines { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
