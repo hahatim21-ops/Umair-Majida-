@@ -1,6 +1,6 @@
 // Animated flames placed exactly on the painted flames, plus the lighting sequence:
-// card dimmed to ~55% → flames light from the outer candles inward (each with a spark)
-// → a warm glow spreads and the dimming fades out over ~1.8s → flames keep flickering.
+// the card stays at full brightness (no fade); the flames light from the outer candles
+// inward, each with a spark, a warm glow gathers around them, and they keep flickering.
 import { gsap } from 'gsap';
 
 let uid = 0;
@@ -33,12 +33,11 @@ export class Candles {
    */
   constructor(box, flames, o = {}) {
     this.box = box; this.calm = !!o.calm;
-    this.dim = Object.assign(document.createElement('div'), { className: 'dim' });
     this.warm = Object.assign(document.createElement('div'), { className: 'warm' });
     this.warm.style.background = o.warm || '';
     this.layer = Object.assign(document.createElement('div'), { className: 'flames' });
     this.layer.setAttribute('aria-hidden', 'true');
-    box.append(this.dim, this.warm, this.layer);
+    box.append(this.warm, this.layer);
 
     // flame elements; light order: outermost (furthest from centre line) first
     this.items = flames.map((f) => {
@@ -56,10 +55,8 @@ export class Candles {
     if (this.calm) {
       // static glow only
       this.items.forEach((it) => it.el.classList.add('is-lit'));
-      gsap.set(this.warm, { opacity: 0.55 });
+      gsap.set(this.warm, { opacity: 0.45 });
       this.lit = true;
-    } else {
-      gsap.set(this.dim, { opacity: 0.45 }); // ≈ 55% brightness
     }
   }
 
@@ -75,8 +72,7 @@ export class Candles {
         .fromTo(it.glow, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' }, t + 0.05);
     });
     const after = this.order.length * step + 0.25;
-    tl.to(this.warm, { opacity: 0.6, duration: 1.8, ease: 'sine.inOut' }, after - 0.3)
-      .to(this.dim, { opacity: 0, duration: 1.8, ease: 'sine.inOut' }, after)
+    tl.to(this.warm, { opacity: 0.45, duration: 1.8, ease: 'sine.inOut' }, after - 0.6)
       .add(() => { this.items.forEach((it) => it.el.classList.add('is-lit')); this.flicker(true); });
     this.seq = tl;
   }

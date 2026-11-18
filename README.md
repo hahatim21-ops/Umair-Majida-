@@ -1,6 +1,11 @@
 # Majida & Umair – Wedding Reception
 
-A one-page, mobile-first invitation: a wax-seal gate whose curtain draws aside, then five cards stacked edge to edge in one continuous column (full width on phones, 520px wide on larger screens with a blurred backdrop beside it), scratch-off date and photo, candle lighting, and background music.
+A one-page, mobile-first invitation for Majida & Umair's wedding reception.
+
+- **Opening:** the gate card is shown whole (never zoomed). Tap the seal: a gold pulse, the pearl strands come loose and the pearls fall, then the velvet curtain parts down the middle and gathers to both sides.
+- **Pages:** five cards stacked edge to edge in one continuous column, each shown whole: full width on phones, 520px wide on larger screens with a blurred backdrop beside it. No page fades in or zooms.
+- **Text animation:** every line of painted text writes itself in as its card scrolls into view.
+- Scratch-off date and photo, candles that light one by one, and background music.
 
 Built with Vite (vanilla JS), GSAP + ScrollTrigger, Lenis, and a small custom WebGL shader for the sway effect.
 
@@ -37,6 +42,8 @@ Everything you might want to change lives in this one file:
 - `src/data/layout.js`: the seal, the inner circles of the three gold frames on UM_3.1, the UM_4 photo oval, the free band for the UM_5 buttons, and where the scroll cue and gate hint sit. These were measured by fitting circles and ellipses to the painted frames.
 - `src/data/flames/UM_5.json` and `UM_6.json`: one entry per painted flame. `x` and `y` are the centre of the flame, in % of the image width and height. `h` is the flame height in % of the image width. The flames light from the outside in (the furthest from the centre line go first). To move a flame, change its `x`/`y`. To add one, add a line.
 - `src/data/strands.js`: pearl-strand paths (point lists in %) that the travelling glints follow.
+- `src/data/lines.json`: every line of painted text on UM_2, UM_3, UM_5 and UM_6 as `[x, y, w, h]` in %, in the order they write in. `fx` picks the style: `ltr` (wipe left to right), `rtl` (Arabic, right to left), `script` (slower diagonal wipe for the script names), `rise` (short words). If you change a box, run `python scripts/derive_blanks.py` and `npm run assets cardImages` so the text-free plate matches.
+- `src/data/pearls.json`: the 132 painted pearls on the velvet strands of the gate (centre and diameter in %). These are the pearls that fall when the seal is tapped.
 
 ### Sway masks: `src/data/masks/*.json` → `public/assets/masks/*.png`
 
@@ -63,12 +70,13 @@ The originals in `/assets` are never modified. `npm run assets` (which uses shar
 - the masks
 - `assets/audio/allahumma.mp3`, re-encoded at 96 kbps with ffmpeg; if ffmpeg is missing, the original is copied instead
 
-You can also rebuild one part at a time: `npm run assets cardImages | discs | ogAndIcons | masks | audio`.
+You can also rebuild one part at a time: `npm run assets cardImages | discs | pearlPatch | ogAndIcons | masks | audio`.
 
-Two derived plates come from one-off Python helpers (they need opencv-python, scipy and pillow). Their outputs are committed in `assets/derived/`, so you only need to run these if the source images change:
+A few derived images come from one-off Python helpers (they need opencv-python, scipy and pillow). Their outputs are committed in `assets/derived/`, so you only need to run these if the source images or the data files change:
 
+- `python scripts/derive_blanks.py`: text-free copies of UM_2, UM_3, UM_5 and UM_6. Each card shows its text-free copy, and every text line from `lines.json` is laid exactly over it and revealed with a soft ink wipe.
+- `python scripts/derive_pearls.py`: finds the pearls on the gate's velvet strands (writes `src/data/pearls.json`) and makes a small patch that paints velvet over them. At the tap the page swaps in the patch and drops one sprite per pearl, cut from the gate image itself.
 - `python scripts/derive_seal.py`: cuts out the seal (used for the favicons).
-- `python scripts/derive_blank_um2.py`: a text-free copy of UM_2, so the text can "write itself in" over it.
 
 ## Deploying
 
@@ -84,8 +92,8 @@ After deploying, paste the URL into WhatsApp to check the preview (title, date l
 
 ## Motion and accessibility
 
-- **Reduced motion:** with `prefers-reduced-motion`, on low-power devices (Save-Data, ≤2 GB RAM or ≤2 cores), or with `?calm` in the URL, the site turns off sway, parallax, glints, particles and flicker. It keeps gentle fades and a static candle glow, and the gate fades out instead of splitting. If the device drops below about 40 fps for around 4 seconds, sway also switches itself off.
+- **Reduced motion:** with `prefers-reduced-motion`, on low-power devices (Save-Data, ≤2 GB RAM or ≤2 cores), or with `?calm` in the URL, the site turns off sway, parallax, glints, particles and flicker. It shows the text without the writing animation, keeps a static candle glow, and the curtain simply parts without falling pearls. If the device drops below about 40 fps for around 4 seconds, sway also switches itself off.
 - **Off-screen effects:** sections that are off screen pause all their effects.
 - **Keyboard:** the seal is a real button (Enter or Space). Each scratch card has a quiet "Reveal" button for keyboard and screen-reader users; it sits inside the card and only appears when focused, so nothing breaks the seamless column. The calendar sheet traps focus and closes with Esc.
-- **Music toggle:** it fades aside whenever painted text passes beneath it while scrolling (text areas are listed in `TEXT_ZONES` in `src/data/layout.js`).
+- **Music toggle:** it fades aside whenever painted text passes beneath it while scrolling (the text lines come from `src/data/lines.json`; buttons and the scratch areas are in `EXTRA_ZONES` in `src/data/layout.js`).
 - **Screen readers:** every card image's alt text transcribes its painted text.

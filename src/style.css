@@ -59,7 +59,7 @@ button { font: inherit; color: inherit; }
   container-type: inline-size;
 }
 .card-box > picture, .card-box > picture > img,
-.card-box .write-in, .card-box .write-in img, .card-box .blank, .card-box .blank img {
+.card-box .blank, .card-box .blank img {
   position: absolute; inset: 0; width: 100%; height: 100%;
 }
 .card-img { object-fit: contain; user-select: none; -webkit-user-drag: none; pointer-events: none; color: transparent; font-size: 0; }
@@ -84,12 +84,26 @@ button { font: inherit; color: inherit; }
   position: absolute; top: 0; bottom: 0; left: 50%; width: var(--col);
   margin-left: calc(var(--col) / -2); overflow: hidden;
 }
+.gate__bd { position: absolute; inset: -6%; background-size: cover; background-position: center; }
+.gate__bd::after { content: ''; position: absolute; inset: 0; background: rgba(20, 22, 8, .16); }
+/* the whole card, never cropped or zoomed: as wide as the column allows, centred */
 .gate__box {
-  position: absolute; left: 50%; top: 50%;
-  width: max(var(--col), calc(100 * var(--svh) * 0.5625));
+  position: absolute; left: 50%; top: 50%; z-index: 2;
+  width: min(var(--col), calc(100 * var(--svh) * 0.5625));
   transform: translate(-50%, -50%);
 }
-.gate__box .sway { z-index: 1; }
+.gate__gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+.gate__col.has-gl .gate__bd { visibility: hidden; }
+.gate__col.has-gl .gate__box > picture { visibility: hidden; }
+.gate__plate { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gate__half { will-change: transform; }
+.gate__half--l { clip-path: inset(0 50% 0 0); }
+.gate__half--r { clip-path: inset(0 0 0 50%); }
+.pearl-fall { position: absolute; inset: 0; z-index: 3; pointer-events: none; visibility: hidden; }
+.pearl-fall.is-on { visibility: visible; }
+.pearl-sprite { position: absolute; border-radius: 50%; background-repeat: no-repeat; will-change: transform; }
+.hint-w { display: inline-block; white-space: nowrap; }
+.hint-l { display: inline-block; opacity: 0; }
 .seal-btn {
   position: absolute; z-index: 3;
   left: calc(25.69% - 11.5cqw); top: calc(49.77% - 11.5cqw);
@@ -150,17 +164,25 @@ button { font: inherit; color: inherit; }
 .card__view { position: relative; aspect-ratio: var(--ar); }
 .card__view > .card-box { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 
-/* Page 3 (landscape card) in the portrait column: show its focus region
-   (x 20–80%, y 4–100%: title, three frames, hint line, bow and lace border) at full width */
-.sec--um3 .card__view { aspect-ratio: 1003.2 / 903.36; overflow: hidden; }
-.sec--um3 .card__view > .card-box { width: 166.6667%; height: 104.1667%; left: -33.3333%; top: -4.1667%; }
 
-/* UM_2 write-in */
-.write-in {
-  --wipe: 120%;
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--wipe) - 14%), transparent var(--wipe));
-  mask-image: linear-gradient(to bottom, #000 calc(var(--wipe) - 14%), transparent var(--wipe));
+/* Painted text lines writing themselves in (see src/lib/lines.js) */
+.text-lines { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.tl {
+  position: absolute; background-repeat: no-repeat;
+  --p: -25%;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--p) - 22%), transparent var(--p));
+  mask-image: linear-gradient(90deg, #000 calc(var(--p) - 22%), transparent var(--p));
 }
+.tl--rtl {
+  -webkit-mask-image: linear-gradient(270deg, #000 calc(var(--p) - 22%), transparent var(--p));
+  mask-image: linear-gradient(270deg, #000 calc(var(--p) - 22%), transparent var(--p));
+}
+.tl--script {
+  -webkit-mask-image: linear-gradient(110deg, #000 calc(var(--p) - 30%), transparent var(--p));
+  mask-image: linear-gradient(110deg, #000 calc(var(--p) - 30%), transparent var(--p));
+}
+.tl--rise { -webkit-mask-image: none; mask-image: none; opacity: 0; }
+.tl.is-done { -webkit-mask-image: none; mask-image: none; opacity: 1; filter: none; }
 
 /* Scroll cue */
 .scroll-cue {

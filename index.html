@@ -38,15 +38,17 @@
       <div class="stage__bd" data-key="um6" style="background-image:url(/assets/img/um6-bd.jpg)"></div>
     </div>
 
-    <!-- Page 1: the gate (cover-fitted to the column, full height) -->
+    <!-- Page 1: the gate. The whole card is shown (never zoomed); any spare height is
+         filled with the card's own blurred backdrop. -->
     <div class="gate" id="gate" aria-label="Invitation cover">
       <div class="gate__col">
+        <div class="gate__bd" style="background-image:url(/assets/img/um1-bd.jpg)"></div>
         <div class="gate__box card-box" data-key="um1" style="--ar:0.5625">
           <picture>
-            <source type="image/avif" srcset="/assets/img/um1-s.avif 828w, /assets/img/um1-l.avif 1440w" sizes="(max-width: 520px) 120vw, 600px" />
-            <source type="image/webp" srcset="/assets/img/um1-s.webp 828w, /assets/img/um1-l.webp 1440w" sizes="(max-width: 520px) 120vw, 600px" />
+            <source type="image/avif" srcset="/assets/img/um1-s.avif 828w, /assets/img/um1-l.avif 1440w" sizes="(max-width: 520px) 100vw, 520px" />
+            <source type="image/webp" srcset="/assets/img/um1-s.webp 828w, /assets/img/um1-l.webp 1440w" sizes="(max-width: 520px) 100vw, 520px" />
             <img class="card-img" id="gate-img" src="/assets/img/um1-l.jpg"
-              srcset="/assets/img/um1-s.jpg 828w, /assets/img/um1-l.jpg 1440w" sizes="(max-width: 520px) 120vw, 600px"
+              srcset="/assets/img/um1-s.jpg 828w, /assets/img/um1-l.jpg 1440w" sizes="(max-width: 520px) 100vw, 520px"
               width="1440" height="2560" fetchpriority="high" decoding="async"
               alt="A green velvet curtain draped with ivory lace and strands of pearls, gathered by a cream wax seal marked U&amp;M." />
           </picture>
@@ -65,21 +67,13 @@
           <div class="card">
             <div class="card__view">
               <div class="card-box" data-key="um2">
-                <picture class="blank">
+                <picture>
                   <source type="image/avif" data-srcset="/assets/img/um2blank-s.avif 828w, /assets/img/um2blank-l.avif 1440w" sizes="(max-width: 520px) 100vw, 520px" />
                   <source type="image/webp" data-srcset="/assets/img/um2blank-s.webp 828w, /assets/img/um2blank-l.webp 1440w" sizes="(max-width: 520px) 100vw, 520px" />
-                  <img class="card-img card-img--blank" data-src="/assets/img/um2blank-l.jpg" data-srcset="/assets/img/um2blank-s.jpg 828w, /assets/img/um2blank-l.jpg 1440w"
-                    sizes="(max-width: 520px) 100vw, 520px" width="1440" height="2560" alt="" aria-hidden="true" decoding="async" />
+                  <img class="card-img" data-src="/assets/img/um2blank-l.jpg" data-srcset="/assets/img/um2blank-s.jpg 828w, /assets/img/um2blank-l.jpg 1440w"
+                    sizes="(max-width: 520px) 100vw, 520px" width="1440" height="2560" decoding="async"
+                    alt="بسم الله الرحمن الرحيم. In the name of Allah, The most beneficial , The most merciful. With the blessings of Late Mr Rafiq Darvesh &amp; Mrs Noorjahan Rafiq Darvesh, Late Mr Nasir &amp; Mrs Yasmin Nasir Memon. We cordially invite you to the Wedding Reception of Majida (D/O Nasreen &amp; Ashfaq Darvesh) &amp; Umair (S/O Muazarin &amp; Musharaf Merchant). @bespokedesigns._" />
                 </picture>
-                <div class="write-in">
-                  <picture>
-                    <source type="image/avif" data-srcset="/assets/img/um2-s.avif 828w, /assets/img/um2-l.avif 1440w" sizes="(max-width: 520px) 100vw, 520px" />
-                    <source type="image/webp" data-srcset="/assets/img/um2-s.webp 828w, /assets/img/um2-l.webp 1440w" sizes="(max-width: 520px) 100vw, 520px" />
-                    <img class="card-img" data-src="/assets/img/um2-l.jpg" data-srcset="/assets/img/um2-s.jpg 828w, /assets/img/um2-l.jpg 1440w"
-                      sizes="(max-width: 520px) 100vw, 520px" width="1440" height="2560" decoding="async"
-                      alt="بسم الله الرحمن الرحيم. In the name of Allah, The most beneficial , The most merciful. With the blessings of Late Mr Rafiq Darvesh &amp; Mrs Noorjahan Rafiq Darvesh, Late Mr Nasir &amp; Mrs Yasmin Nasir Memon. We cordially invite you to the Wedding Reception of Majida (D/O Nasreen &amp; Ashfaq Darvesh) &amp; Umair (S/O Muazarin &amp; Musharaf Merchant). @bespokedesigns._" />
-                  </picture>
-                </div>
                 <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
                   <span class="scroll-cue__thread"></span><span class="scroll-cue__pearl"></span>
                   <svg class="scroll-cue__chev" viewBox="0 0 24 12"><path d="M2 2l10 8 10-8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -99,10 +93,10 @@
               <div class="card-box" data-key="um3">
                 <button class="reveal-btn" type="button" data-reveal="date">Reveal the date</button>
                 <picture>
-                  <source type="image/avif" data-srcset="/assets/img/um3-s.avif 828w, /assets/img/um3-l.avif 1672w" sizes="(max-width: 520px) 167vw, 867px" />
-                  <source type="image/webp" data-srcset="/assets/img/um3-s.webp 828w, /assets/img/um3-l.webp 1672w" sizes="(max-width: 520px) 167vw, 867px" />
-                  <img class="card-img" data-src="/assets/img/um3-l.jpg" data-srcset="/assets/img/um3-s.jpg 828w, /assets/img/um3-l.jpg 1672w"
-                    sizes="(max-width: 520px) 167vw, 867px"
+                  <source type="image/avif" data-srcset="/assets/img/um3blank-s.avif 828w, /assets/img/um3blank-l.avif 1672w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um3blank-s.webp 828w, /assets/img/um3blank-l.webp 1672w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img" data-src="/assets/img/um3blank-l.jpg" data-srcset="/assets/img/um3blank-s.jpg 828w, /assets/img/um3blank-l.jpg 1672w"
+                    sizes="(max-width: 520px) 100vw, 520px"
                     width="1672" height="941" decoding="async"
                     alt="Save the Date. Celebration Dates. Scratch the pearls to reveal the wedding date. 5 December 2026. Rub each pearl with your finger or mouse to reveal." />
                 </picture>
@@ -141,9 +135,9 @@
             <div class="card__view">
               <div class="card-box" data-key="um5">
                 <picture>
-                  <source type="image/avif" data-srcset="/assets/img/um5-s.avif 828w, /assets/img/um5-l.avif 1080w" sizes="(max-width: 520px) 100vw, 520px" />
-                  <source type="image/webp" data-srcset="/assets/img/um5-s.webp 828w, /assets/img/um5-l.webp 1080w" sizes="(max-width: 520px) 100vw, 520px" />
-                  <img class="card-img" data-src="/assets/img/um5-l.jpg" data-srcset="/assets/img/um5-s.jpg 828w, /assets/img/um5-l.jpg 1080w"
+                  <source type="image/avif" data-srcset="/assets/img/um5blank-s.avif 828w, /assets/img/um5blank-l.avif 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um5blank-s.webp 828w, /assets/img/um5blank-l.webp 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img" data-src="/assets/img/um5blank-l.jpg" data-srcset="/assets/img/um5blank-s.jpg 828w, /assets/img/um5blank-l.jpg 1080w"
                     sizes="(max-width: 520px) 100vw, 520px" width="1080" height="1920" decoding="async"
                     alt="Reception. 05th December 2026. Bay View, Islam Gymkhana. 8:30 PM onwards. @bespokedesigns._" />
                 </picture>
@@ -165,9 +159,9 @@
             <div class="card__view">
               <div class="card-box" data-key="um6">
                 <picture>
-                  <source type="image/avif" data-srcset="/assets/img/um6-s.avif 828w, /assets/img/um6-l.avif 1080w" sizes="(max-width: 520px) 100vw, 520px" />
-                  <source type="image/webp" data-srcset="/assets/img/um6-s.webp 828w, /assets/img/um6-l.webp 1080w" sizes="(max-width: 520px) 100vw, 520px" />
-                  <img class="card-img" data-src="/assets/img/um6-l.jpg" data-srcset="/assets/img/um6-s.jpg 828w, /assets/img/um6-l.jpg 1080w"
+                  <source type="image/avif" data-srcset="/assets/img/um6blank-s.avif 828w, /assets/img/um6blank-l.avif 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um6blank-s.webp 828w, /assets/img/um6blank-l.webp 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img" data-src="/assets/img/um6blank-l.jpg" data-srcset="/assets/img/um6blank-s.jpg 828w, /assets/img/um6blank-l.jpg 1080w"
                     sizes="(max-width: 520px) 100vw, 520px" width="1080" height="1920" decoding="async"
                     alt="في الدُنيا والآخرة. “in this world and the next”. Majida &amp; Umair. #hUMtUM. Awaiting your presence: Mr &amp; Mrs Shabina Ahmed Darvesh, Mr &amp; Mrs Sanah Ibrahim Memon. @bespokedesigns._" />
                 </picture>

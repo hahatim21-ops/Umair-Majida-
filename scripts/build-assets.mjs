@@ -24,13 +24,16 @@ const SOURCES = {
   um1: A('UM_1.JPEG.JPEG'),
   um2: A('UM_2.JPEG.JPEG'),
   um2blank: A('derived/UM_2_blank.jpg'),
+  um3blank: A('derived/UM_3_blank.jpg'),
+  um5blank: A('derived/UM_5_blank.jpg'),
+  um6blank: A('derived/UM_6_blank.jpg'),
   um3: A('UM_3.1.PNG.PNG'),
   um4: A('UM_4.PNG.PNG'),
   um5: A('UM_5.JPEG.JPEG'),
   um6: A('UM_6.JPEG.JPEG'),
 };
 // large width per image (never upscale; UM_3.1 keeps its full 1672px because phones zoom into it)
-const LARGE = { um1: 1440, um2: 1440, um2blank: 1440, um3: 1672, um4: 1254, um5: 1080, um6: 1080 };
+const LARGE = { um1: 1440, um2: 1440, um2blank: 1440, um3: 1672, um3blank: 1672, um5blank: 1080, um6blank: 1080, um4: 1254, um5: 1080, um6: 1080 };
 const SMALL = 828;
 
 const kb = (f) => (fs.statSync(f).size / 1024).toFixed(0) + ' KB';
@@ -53,7 +56,7 @@ async function cardImages() {
       [avif, webp, jpg].forEach(log);
     }
     // backdrop: tiny, pre-blurred (~30px at display size), stretched with cover-fit in CSS
-    if (key !== 'um2blank') {
+    if (!key.endsWith('blank')) {
       const bd = path.join(IMG, `${key}-bd.jpg`);
       let input = sharp(src);
       if (key === 'um4') {
@@ -87,6 +90,14 @@ async function discs() {
       .toFile(f);
     log(f);
   }
+}
+
+// Pearl-free patch for the gate (painted velvet over the strands that fall at the tap)
+async function pearlPatch() {
+  console.log('pearl patch');
+  const f = path.join(IMG, 'um1-pearlpatch.webp');
+  await sharp(A('derived/UM_1_pearlpatch.png')).resize({ width: 828 }).webp({ quality: 80, alphaQuality: 70, effort: 6 }).toFile(f);
+  log(f);
 }
 
 async function ogAndIcons() {
@@ -178,7 +189,7 @@ function audio() {
 }
 
 const only = process.argv[2];
-const tasks = { cardImages, discs, ogAndIcons, masks, audio };
+const tasks = { cardImages, discs, pearlPatch, ogAndIcons, masks, audio };
 for (const [name, fn] of Object.entries(tasks)) {
   if (!only || only === name) await fn();
 }

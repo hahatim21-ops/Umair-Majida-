@@ -1,9 +1,7 @@
-"""One-off helper: cut the wax seal out of UM_1 and fill the gate behind it.
+"""One-off helper: cut the wax seal out of UM_1.
 
 Outputs (assets/derived/):
-  seal.png         RGBA cut-out of the seal (600x600 crop around its centre)
-  UM_1_noseal.jpg  UM_1 with the seal area filled with nearby lace (reference)
-  seal_patch.png   just that filled area, feathered (laid over the gate halves) (used for the opening halves)
+  seal.png         RGBA cut-out of the seal (600x600 crop around its centre), used for the favicons
 Run:  python scripts/derive_seal.py
 """
 from PIL import Image
@@ -41,19 +39,5 @@ alpha = nd.gaussian_filter(s.astype(float), 1.2)
 rgba = np.dstack([c, alpha * 255]).clip(0, 255).astype(np.uint8)
 Image.fromarray(rgba, 'RGBA').save('assets/derived/seal.png')
 
-# fill the gate behind the seal with real lace texture copied from just below it
-# (a feathered patch reads as the drape continuing; plain inpainting looked smudgy)
-full = cv2.imread(SRC).astype(float)
-m = np.zeros(full.shape[:2])
-m[CY - R:CY + R, CX - R:CX + R] = nd.binary_dilation(s, iterations=14)
-m = cv2.GaussianBlur(m, (0, 0), 9)[..., None]
-DY, DX = 560, -60
-patch = np.roll(np.roll(full, -DY, axis=0), -DX, axis=1)  # patch[y, x] = full[y + DY, x + DX]
-out = (full * (1 - m) + patch * m).clip(0, 255).astype(np.uint8)
-cv2.imwrite('assets/derived/UM_1_noseal.jpg', out, [cv2.IMWRITE_JPEG_QUALITY, 92])
-# small RGBA patch (same box as seal.png) that the opening halves lay over the gate
-crop = out[CY - R:CY + R, CX - R:CX + R][..., ::-1]
-alpha = (m[CY - R:CY + R, CX - R:CX + R, 0] * 255).clip(0, 255).astype(np.uint8)
-Image.fromarray(np.dstack([crop, alpha]), 'RGBA').save('assets/derived/seal_patch.png')
 json.dump({'cx': CX, 'cy': CY, 'crop': 2 * R, 'w': 2160, 'h': 3840}, open('assets/derived/seal.json', 'w'))
 print('ok')

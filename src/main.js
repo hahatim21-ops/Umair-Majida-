@@ -18,8 +18,10 @@ import { Candles } from './lib/candles.js';
 import { Scratch } from './lib/scratch.js';
 import { Music } from './lib/music.js';
 import { initGate } from './lib/gate.js';
+import { TextLines } from './lib/lines.js';
+import LINES from './data/lines.json';
 import { STRANDS } from './data/strands.js';
-import { FRAMES, OVAL, TEXT_ZONES } from './data/layout.js';
+import { FRAMES, OVAL, EXTRA_ZONES } from './data/layout.js';
 import flames5 from './data/flames/UM_5.json';
 import flames6 from './data/flames/UM_6.json';
 
@@ -71,7 +73,7 @@ musicBtn.addEventListener('click', () => music.toggle());
 const sections = $$('.sec').map((sec) => {
   const key = sec.dataset.key;
   const box = $('.card-box', sec);
-  const img = key === 'um2' ? $('.write-in img', sec) : $('picture img', box);
+  const img = $('picture img', box);
   const ar = parseFloat(getComputedStyle(sec).getPropertyValue('--ar')) || 0.5625;
   return { sec, key, box, img, ar, card: $('.card', sec), fx: $('.sec__fx', sec), parts: [] };
 });
@@ -80,9 +82,7 @@ debug.sections = sections;
 const MASK = { um2: 'UM_2', um3: 'UM_3', um4: 'UM_4', um5: 'UM_5', um6: 'UM_6' };
 function ensureSway(s) {
   if (calm || s.sway) return;
-  const host = s.key === 'um2' ? $('.write-in', s.box) : s.box;
-  const after = $('picture', host);
-  s.sway = new Sway(host, s.img, `/assets/masks/${MASK[s.key]}.png`, { amp: 5, after });
+  s.sway = new Sway(s.box, s.img, `/assets/masks/${MASK[s.key]}.png`, { amp: 5, after: $('picture', s.box) });
   s.parts.push(s.sway);
 }
 
@@ -92,6 +92,32 @@ for (const s of sections) {
     const d = new Drift(s.fx, 8);
     s.parts.push(g, d);
   }
+}
+
+// Painted text writes itself in, line by line, over the card's text-free plate
+for (const s of sections) {
+  if (!LINES[s.key]) continue;
+  s.lines = new TextLines(s.box, LINES[s.key], { calm });
+}
+// the slices use the full card at the same size/format the browser picked for the plate
+function fullSrc(s) {
+  const src = s.img.currentSrc || s.img.src;
+  return src ? src.replace(/(um\d)blank-/, '$1-') : '';
+}
+async function linesReady(s) {
+  if (!s.lines) return false;
+  if (!s.img.complete || !s.img.naturalWidth) await new Promise((r) => s.img.addEventListener('load', r, { once: true }));
+  const url = fullSrc(s);
+  await new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = url; });
+  s.lines.setSource(url);
+  return true;
+}
+for (const s of sections) {
+  if (!s.lines || s.key === 'um2') continue;   // UM_2 starts with the gate opening
+  ScrollTrigger.create({
+    trigger: s.sec, start: 'top 72%', once: true,
+    onEnter: () => linesReady(s).then(() => s.lines.play(0.1)),
+  });
 }
 
 // Candles (UM_5 candelabras + corner lights, UM_6 lanterns)
@@ -143,16 +169,7 @@ if (!calm) {
     });
   }
 }
-for (const s of sections) {
-  // UM_2 is revealed by the gate; UM_5/UM_6 already dim + light up with their candles
-  if (['um2', 'um5', 'um6'].includes(s.key)) continue;
-  const inner = $('.card__view', s.sec);
-  gsap.set(inner, calm ? { opacity: 0.6 } : { opacity: 0.6, scale: 1.03 });
-  ScrollTrigger.create({
-    trigger: s.sec, start: 'top 94%', once: true,
-    onEnter: () => gsap.to(inner, { opacity: 1, scale: 1, duration: calm ? 0.9 : 1.6, ease: 'power2.out' }),
-  });
-}
+// No entrance fades or zooms: every page is always shown at full strength.
 
 // side backdrop (visible beside the column on wide screens) follows the page in view
 const stageBds = $$('.stage__bd');
@@ -162,6 +179,7 @@ for (const s of sections) {
 }
 
 // the music toggle steps aside while painted text (or a button) passes beneath it
+const zonesFor = (key) => [...(LINES[key] || []).map((l) => l.box), ...(EXTRA_ZONES[key] || [])];
 let asideRaf = 0;
 function checkToggle() {
   asideRaf = 0;
@@ -173,7 +191,7 @@ function checkToggle() {
     if (!s.visible) continue;
     const r = s.box.getBoundingClientRect();
     const view = $('.card__view', s.sec).getBoundingClientRect();
-    for (const [x, y, w, h] of TEXT_ZONES[s.key] || []) {
+    for (const [x, y, w, h] of zonesFor(s.key)) {
       const L = Math.max(r.left + (x / 100) * r.width, view.left), R = Math.min(r.left + ((x + w) / 100) * r.width, view.right);
       const T = Math.max(r.top + (y / 100) * r.height, view.top), B = Math.min(r.top + ((y + h) / 100) * r.height, view.bottom);
       if (L < t.right + pad && R > t.left - pad && T < t.bottom + pad && B > t.top - pad) { over = true; break; }
@@ -187,19 +205,13 @@ window.addEventListener('scroll', queueToggle, { passive: true });
 window.addEventListener('resize', queueToggle);
 debug.checkToggle = checkToggle;
 
-// ── UM_2: write-in + scroll cue ───────────────────────────────────────────────
+// ── UM_2: text lines + scroll cue ───────────────────────────────────────────────
 const s2 = sections[0];
-const writeIn = $('.write-in', s2.box);
 const cue = $('#scroll-cue');
-if (!calm) writeIn.style.setProperty('--wipe', '-2%');
+const s2Ready = { p: null };
 function revealInvitation() {
-  if (calm) {
-    gsap.fromTo(s2.card, { opacity: 0 }, { opacity: 1, duration: 1 });
-  } else {
-    gsap.fromTo(s2.card, { scale: 1.06 }, { scale: 1, duration: 2.4, ease: 'power2.out' });
-    gsap.to(writeIn, { '--wipe': '116%', duration: 2.5, delay: 0.9, ease: 'sine.inOut' });
-  }
-  gsap.to(cue, { opacity: 1, duration: 0.8, delay: calm ? 1 : 2.6 });
+  (s2Ready.p || linesReady(s2)).then(() => s2.lines.play(calm ? 0 : 0.5));
+  gsap.to(cue, { opacity: 1, duration: 0.8, delay: calm ? 1 : 3.2 });
 }
 let cueHidden = false;
 function hideCue() {
@@ -211,8 +223,7 @@ function hideCue() {
 // ── Gate ─────────────────────────────────────────────────────────────────────
 const gate = initGate({
   music, calm,
-  getSway: () => debug.gateSway,
-  onOpenStart: () => {},
+  onOpenStart: () => { hydrate(s3.sec); loadDiscs(); },
   onOpened: (phase) => {
     if (phase === 'reveal') { revealInvitation(); setStage('um2'); }
     if (phase === 'done') {
@@ -247,12 +258,8 @@ debug.gate = gate;
   setTimeout(() => $('#loader').remove(), 800);
   gate.ready();
   hydrate(s2.sec); // the invitation sits right under the gate
-  if (!calm) {
-    const gs = new Sway($('.gate__box'), gateImg, '/assets/masks/UM_1.png', { amp: 5, after: $('.gate__box picture') });
-    gs.setActive(true);
-    debug.gateSway = gs;
-  }
-  ensureSway(s2); // invitation renders under the gate
+  s2Ready.p = linesReady(s2);
+  ensureSway(s2);
 })();
 
 // ── Page 3: scratch the date ─────────────────────────────────────────────────
