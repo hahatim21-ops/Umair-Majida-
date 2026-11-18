@@ -1,0 +1,26 @@
+{
+ "image": "UM_6",
+ "note": "x,y = centre of the painted flame in % of image width/height; h = flame height in % of image width",
+ "flames": [
+  {
+   "x": 11.2,
+   "y": 93.18,
+   "h": 1.94
+  },
+  {
+   "x": 18.61,
+   "y": 95.62,
+   "h": 1.39
+  },
+  {
+   "x": 89.91,
+   "y": 93.12,
+   "h": 1.94
+  },
+  {
+   "x": 82.5,
+   "y": 95.68,
+   "h": 1.39
+  }
+ ]
+}

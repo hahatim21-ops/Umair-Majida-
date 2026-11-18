@@ -1,0 +1,9 @@
+{
+  "image": "UM_1", "aspect": [9, 16], "outWidth": 360, "blur": 1.6,
+  "note": "Gate. Everything sways (lace, pearls, curtain) except the seal. Lower parts swing more.",
+  "base": 0,
+  "shapes": [
+    { "rect": [0, 0, 100, 100], "grad": [0.35, 1] },
+    { "ellipse": [25.7, 49.8, 14, 8.2], "v": 0 }
+  ]
+}

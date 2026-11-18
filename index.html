@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>%SITE_TITLE%</title>
+    <meta name="description" content="%SITE_DESCRIPTION%" />
+    <meta name="theme-color" content="%THEME_COLOR%" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="%SITE_TITLE%" />
+    <meta property="og:description" content="%SITE_DESCRIPTION%" />
+    <meta property="og:image" content="%OG_IMAGE%" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A cream wax seal marked U&amp;M on lace and pearls over green velvet" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" as="image" href="/assets/img/um1-s.avif" type="image/avif"
+      imagesrcset="/assets/img/um1-s.avif 828w, /assets/img/um1-l.avif 1440w" imagesizes="(max-width: 520px) 100vw, 520px" fetchpriority="high" />
+    <link rel="preload" as="fetch" href="/assets/audio/allahumma.mp3" crossorigin="anonymous" />
+  </head>
+  <body class="is-locked">
+    <!-- Loader -->
+    <div class="loader" id="loader" role="status" aria-live="polite">
+      <div class="loader__pearls" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <span class="sr-only">Loading the invitation…</span>
+    </div>
+
+    <!-- Fixed backdrop beside the column (wide screens); follows the page in view -->
+    <div class="stage" aria-hidden="true">
+      <div class="stage__bd is-on" data-key="um1" style="background-image:url(/assets/img/um1-bd.jpg)"></div>
+      <div class="stage__bd" data-key="um2" style="background-image:url(/assets/img/um2-bd.jpg)"></div>
+      <div class="stage__bd" data-key="um3" style="background-image:url(/assets/img/um3-bd.jpg)"></div>
+      <div class="stage__bd" data-key="um4" style="background-image:url(/assets/img/um4-bd.jpg)"></div>
+      <div class="stage__bd" data-key="um5" style="background-image:url(/assets/img/um5-bd.jpg)"></div>
+      <div class="stage__bd" data-key="um6" style="background-image:url(/assets/img/um6-bd.jpg)"></div>
+    </div>
+
+    <!-- Page 1: the gate (cover-fitted to the column, full height) -->
+    <div class="gate" id="gate" aria-label="Invitation cover">
+      <div class="gate__col">
+        <div class="gate__box card-box" data-key="um1" style="--ar:0.5625">
+          <picture>
+            <source type="image/avif" srcset="/assets/img/um1-s.avif 828w, /assets/img/um1-l.avif 1440w" sizes="(max-width: 520px) 120vw, 600px" />
+            <source type="image/webp" srcset="/assets/img/um1-s.webp 828w, /assets/img/um1-l.webp 1440w" sizes="(max-width: 520px) 120vw, 600px" />
+            <img class="card-img" id="gate-img" src="/assets/img/um1-l.jpg"
+              srcset="/assets/img/um1-s.jpg 828w, /assets/img/um1-l.jpg 1440w" sizes="(max-width: 520px) 120vw, 600px"
+              width="1440" height="2560" fetchpriority="high" decoding="async"
+              alt="A green velvet curtain draped with ivory lace and strands of pearls, gathered by a cream wax seal marked U&amp;M." />
+          </picture>
+          <div class="seal-ring" aria-hidden="true"></div>
+          <button class="seal-btn" id="seal-btn" type="button" aria-label="Open invitation"></button>
+          <p class="gate__hint" id="gate-hint" aria-hidden="true">Tap the seal to open</p>
+        </div>
+      </div>
+    </div>
+
+    <main id="main" class="main">
+      <!-- Page 2: the invitation -->
+      <section class="sec sec--um2" id="invitation" data-key="um2" style="--ar:0.5625" aria-label="Invitation">
+        <div class="sec__fx" aria-hidden="true"></div>
+        <div class="sec__inner">
+          <div class="card">
+            <div class="card__view">
+              <div class="card-box" data-key="um2">
+                <picture class="blank">
+                  <source type="image/avif" data-srcset="/assets/img/um2blank-s.avif 828w, /assets/img/um2blank-l.avif 1440w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um2blank-s.webp 828w, /assets/img/um2blank-l.webp 1440w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img card-img--blank" data-src="/assets/img/um2blank-l.jpg" data-srcset="/assets/img/um2blank-s.jpg 828w, /assets/img/um2blank-l.jpg 1440w"
+                    sizes="(max-width: 520px) 100vw, 520px" width="1440" height="2560" alt="" aria-hidden="true" decoding="async" />
+                </picture>
+                <div class="write-in">
+                  <picture>
+                    <source type="image/avif" data-srcset="/assets/img/um2-s.avif 828w, /assets/img/um2-l.avif 1440w" sizes="(max-width: 520px) 100vw, 520px" />
+                    <source type="image/webp" data-srcset="/assets/img/um2-s.webp 828w, /assets/img/um2-l.webp 1440w" sizes="(max-width: 520px) 100vw, 520px" />
+                    <img class="card-img" data-src="/assets/img/um2-l.jpg" data-srcset="/assets/img/um2-s.jpg 828w, /assets/img/um2-l.jpg 1440w"
+                      sizes="(max-width: 520px) 100vw, 520px" width="1440" height="2560" decoding="async"
+                      alt="بسم الله الرحمن الرحيم. In the name of Allah, The most beneficial , The most merciful. With the blessings of Late Mr Rafiq Darvesh &amp; Mrs Noorjahan Rafiq Darvesh, Late Mr Nasir &amp; Mrs Yasmin Nasir Memon. We cordially invite you to the Wedding Reception of Majida (D/O Nasreen &amp; Ashfaq Darvesh) &amp; Umair (S/O Muazarin &amp; Musharaf Merchant). @bespokedesigns._" />
+                  </picture>
+                </div>
+                <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
+                  <span class="scroll-cue__thread"></span><span class="scroll-cue__pearl"></span>
+                  <svg class="scroll-cue__chev" viewBox="0 0 24 12"><path d="M2 2l10 8 10-8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 3: scratch the date -->
+      <section class="sec sec--um3" id="date" data-key="um3" style="--ar:1.7768" aria-label="Save the date">
+        <div class="sec__fx" aria-hidden="true"></div>
+        <div class="sec__inner">
+          <div class="card">
+            <div class="card__view">
+              <div class="card-box" data-key="um3">
+                <button class="reveal-btn" type="button" data-reveal="date">Reveal the date</button>
+                <picture>
+                  <source type="image/avif" data-srcset="/assets/img/um3-s.avif 828w, /assets/img/um3-l.avif 1672w" sizes="(max-width: 520px) 167vw, 867px" />
+                  <source type="image/webp" data-srcset="/assets/img/um3-s.webp 828w, /assets/img/um3-l.webp 1672w" sizes="(max-width: 520px) 167vw, 867px" />
+                  <img class="card-img" data-src="/assets/img/um3-l.jpg" data-srcset="/assets/img/um3-s.jpg 828w, /assets/img/um3-l.jpg 1672w"
+                    sizes="(max-width: 520px) 167vw, 867px"
+                    width="1672" height="941" decoding="async"
+                    alt="Save the Date. Celebration Dates. Scratch the pearls to reveal the wedding date. 5 December 2026. Rub each pearl with your finger or mouse to reveal." />
+                </picture>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 4: scratch the photo -->
+      <section class="sec sec--um4" id="photo" data-key="um4" style="--ar:1" aria-label="The couple">
+        <div class="sec__fx" aria-hidden="true"></div>
+        <div class="sec__inner">
+          <div class="card">
+            <div class="card__view">
+              <div class="card-box" data-key="um4">
+                <button class="reveal-btn" type="button" data-reveal="photo">Reveal the photo</button>
+                <picture>
+                  <source type="image/avif" data-srcset="/assets/img/um4-s.avif 828w, /assets/img/um4-l.avif 1254w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um4-s.webp 828w, /assets/img/um4-l.webp 1254w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img" data-src="/assets/img/um4-l.jpg" data-srcset="/assets/img/um4-s.jpg 828w, /assets/img/um4-l.jpg 1254w"
+                    sizes="(max-width: 520px) 100vw, 520px" width="1254" height="1254" decoding="async"
+                    alt="Majida and Umair's hands clasped together, in an oval frame surrounded by pearls, lace curtains and urns of flowers." />
+                </picture>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 5: reception -->
+      <section class="sec sec--um5" id="reception" data-key="um5" style="--ar:0.5625" aria-label="Reception details">
+        <div class="sec__fx" aria-hidden="true"></div>
+        <div class="sec__inner">
+          <div class="card">
+            <div class="card__view">
+              <div class="card-box" data-key="um5">
+                <picture>
+                  <source type="image/avif" data-srcset="/assets/img/um5-s.avif 828w, /assets/img/um5-l.avif 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um5-s.webp 828w, /assets/img/um5-l.webp 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img" data-src="/assets/img/um5-l.jpg" data-srcset="/assets/img/um5-s.jpg 828w, /assets/img/um5-l.jpg 1080w"
+                    sizes="(max-width: 520px) 100vw, 520px" width="1080" height="1920" decoding="async"
+                    alt="Reception. 05th December 2026. Bay View, Islam Gymkhana. 8:30 PM onwards. @bespokedesigns._" />
+                </picture>
+                <div class="actions" id="actions">
+                  <button class="pill" type="button" id="cal-btn" aria-haspopup="dialog" aria-controls="cal-sheet">Add to Calendar</button>
+                  <a class="pill" id="map-btn" href="#" target="_blank" rel="noopener">View Location</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 6: closing -->
+      <section class="sec sec--um6" id="closing" data-key="um6" style="--ar:0.5625" aria-label="Awaiting your presence">
+        <div class="sec__fx" aria-hidden="true"></div>
+        <div class="sec__inner">
+          <div class="card">
+            <div class="card__view">
+              <div class="card-box" data-key="um6">
+                <picture>
+                  <source type="image/avif" data-srcset="/assets/img/um6-s.avif 828w, /assets/img/um6-l.avif 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <source type="image/webp" data-srcset="/assets/img/um6-s.webp 828w, /assets/img/um6-l.webp 1080w" sizes="(max-width: 520px) 100vw, 520px" />
+                  <img class="card-img" data-src="/assets/img/um6-l.jpg" data-srcset="/assets/img/um6-s.jpg 828w, /assets/img/um6-l.jpg 1080w"
+                    sizes="(max-width: 520px) 100vw, 520px" width="1080" height="1920" decoding="async"
+                    alt="في الدُنيا والآخرة. “in this world and the next”. Majida &amp; Umair. #hUMtUM. Awaiting your presence: Mr &amp; Mrs Shabina Ahmed Darvesh, Mr &amp; Mrs Sanah Ibrahim Memon. @bespokedesigns._" />
+                </picture>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Music toggle -->
+    <button class="music" id="music-btn" type="button" aria-pressed="true" aria-label="Mute music" hidden>
+      <span class="music__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <svg class="music__off" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.5" fill="currentColor"/><circle cx="16.5" cy="16" r="2.5" fill="currentColor"/><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+
+    <!-- Add to calendar sheet -->
+    <div class="sheet" id="cal-sheet" role="dialog" aria-modal="true" aria-labelledby="cal-title" hidden>
+      <div class="sheet__scrim" data-close></div>
+      <div class="sheet__panel">
+        <p class="sheet__script" aria-hidden="true">Save the date</p>
+        <h2 class="sheet__title" id="cal-title">Add to Calendar</h2>
+        <a class="pill pill--wide" id="gcal-link" href="#" target="_blank" rel="noopener">Google Calendar</a>
+        <a class="pill pill--wide" id="ics-link" href="/reception.ics">Apple / Outlook (.ics)</a>
+        <button class="sheet__close" type="button" data-close>Close</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

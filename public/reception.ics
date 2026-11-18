@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Majida & Umair//Wedding Reception//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:majida-umair-reception-20261205@humtum.invite
+DTSTAMP:20261118T104311Z
+DTSTART:20261205T150000Z
+DTEND:20261205T180000Z
+SUMMARY:Wedding Reception – Majida & Umair
+DESCRIPTION:We cordially invite you to the Wedding Reception of Majida & Um
+ air. #hUMtUM
+LOCATION:Bay View\, Islam Gymkhana\, 75-A Netaji Subhash Chandra Bose Rd\, 
+ Marine Lines\, Mumbai 400020
+URL:https://www.google.com/maps/search/?api=1&query=Islam+Gymkhana+Marine+L
+ ines+Mumbai
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Wedding Reception – Majida & Umair
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

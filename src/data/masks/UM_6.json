@@ -1,0 +1,26 @@
+{
+  "image": "UM_6", "aspect": [9, 16], "outWidth": 360, "blur": 1.2,
+  "note": "Closing. Flowers, hanging pearl strands (pendulum), top swag, pink drapes sway; arch frame, all text, marble top, lanterns and urns frozen.",
+  "base": 0,
+  "shapes": [
+    { "ellipse": [10, 14, 12, 9], "v": 0.9 },
+    { "ellipse": [90, 14, 12, 9], "v": 0.9 },
+    { "rect": [0, 18, 8, 22], "grad": [0.6, 0.9] },
+    { "rect": [92, 18, 8, 22], "grad": [0.6, 0.9] },
+    { "rect": [1, 20, 13, 30], "grad": [0.25, 1] },
+    { "rect": [86, 20, 13, 30], "grad": [0.25, 1] },
+    { "rect": [22, 13, 56, 10], "grad": [0.4, 1] },
+    { "rect": [0, 40, 10, 40], "grad": [0.5, 1] },
+    { "rect": [90, 40, 10, 40], "grad": [0.5, 1] },
+    { "ellipse": [10, 82, 12, 8], "v": 0.9 },
+    { "ellipse": [90, 82, 12, 8], "v": 0.9 },
+    { "ellipse": [29, 94, 6, 4], "v": 0.8 },
+    { "ellipse": [71, 94, 6, 4], "v": 0.8 },
+
+    { "rect": [0, 0, 100, 12.5], "v": 0 },
+    { "rect": [9.5, 22.8, 81, 61.5], "v": 0 },
+    { "rect": [3, 81, 20, 19], "v": 0 },
+    { "rect": [77, 81, 20, 19], "v": 0 },
+    { "rect": [30, 87, 27, 3.6], "v": 0 }
+  ]
+}
