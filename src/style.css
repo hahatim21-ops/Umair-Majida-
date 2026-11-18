@@ -97,8 +97,6 @@ button { font: inherit; color: inherit; }
 .gate__col.has-gl .gate__box > picture { visibility: hidden; }
 .gate__plate { position: absolute; inset: 0; width: 100%; height: 100%; }
 .gate__half { will-change: transform; }
-.gate__half--l { clip-path: inset(0 50% 0 0); }
-.gate__half--r { clip-path: inset(0 0 0 50%); }
 .pearl-fall { position: absolute; inset: 0; z-index: 3; pointer-events: none; visibility: hidden; }
 .pearl-fall.is-on { visibility: visible; }
 .pearl-sprite { position: absolute; border-radius: 50%; background-repeat: no-repeat; will-change: transform; }

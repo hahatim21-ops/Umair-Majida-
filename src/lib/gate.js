@@ -29,17 +29,18 @@ uniform vec4 uFeather;   // top, bottom, left, right feather (image uv), 0 = non
 uniform vec2 uBdScale;
 uniform float uTime;
 uniform vec2 uAmp;
-uniform float uOpen;     // 0 closed … 1 fully parted
+uniform float uOpen;     // 0 hanging … 1 fallen away
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
   vec2 i = floor(p); vec2 f = fract(p);
   f = f * f * (3.0 - 2.0 * f);
   return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
 }
-vec3 scene(vec2 q) {
+vec4 scene(vec2 q) {
   vec3 bd = texture2D(uBd, (q - 0.5) * uBdScale + 0.5).rgb * 0.84;
+  float bandA = 1.0 - smoothstep(0.0, 0.12, uOpen);   // the blurred band melts away once the curtain is let go
   vec2 iu = (q - uRect.xy) / (uRect.zw - uRect.xy);
-  if (iu.x < 0.0 || iu.x > 1.0 || iu.y < 0.0 || iu.y > 1.0) return bd;
+  if (iu.x < 0.0 || iu.x > 1.0 || iu.y < 0.0 || iu.y > 1.0) return vec4(bd, bandA);
   float m = texture2D(uMask, iu).r;
   vec2 off = vec2(0.0);
   if (m > 0.004) {
@@ -57,34 +58,38 @@ vec3 scene(vec2 q) {
   if (uFeather.y > 0.0) f *= smoothstep(0.0, uFeather.y, 1.0 - iu.y);
   if (uFeather.z > 0.0) f *= smoothstep(0.0, uFeather.z, iu.x);
   if (uFeather.w > 0.0) f *= smoothstep(0.0, uFeather.w, 1.0 - iu.x);
-  return mix(bd, c, f);
+  return vec4(mix(bd, c, f), mix(bandA, 1.0, f));
 }
 void main() {
   vec2 q = vUv;
   float shade = 1.0;
   float alpha = 1.0;
   if (uOpen > 0.0) {
-    float p = uOpen;
-    float e = 0.5 * (1.0 - p);                           // leading edge of each curtain
-    bool left = vUv.x < 0.5;
-    float d = left ? vUv.x : 1.0 - vUv.x;                 // distance from the outer edge
-    d -= 0.010 * p * sin(vUv.y * 7.0 + uTime * 2.0);      // the leading edge ripples
-    alpha = 1.0 - smoothstep(e - 0.004, e + 0.004, d);
-    float t = clamp(d / max(e, 0.0001), 0.0, 1.0);        // 0 outer edge … 1 leading edge
-    float k = 4.0 + 10.0 * p;                             // more folds as it gathers
-    float ph = t * k * 6.2831;
-    float tt = clamp(t + 0.16 * p * sin(ph) / k * 3.0, 0.0, 1.0);
-    q.x = left ? 0.5 * tt : 1.0 - 0.5 * tt;
-    float lift = 0.08 * p * t * t;                        // the hem lifts at the leading edge
-    q.y = vUv.y / (1.0 - lift);
-    alpha *= 1.0 - smoothstep(0.996, 1.004, q.y);
+    // the curtain is let go and falls: the top sags (the middle drops first), the cloth
+    // flutters and pinches in, folds deepen, and it drops away under gravity
+    float F = uOpen;
+    float cx = vUv.x - 0.5;
+    float sag = 0.10 * sin(min(F, 1.0) * 3.1416) * (1.0 - 4.0 * cx * cx);
+    float D = F * 1.15 + sag;
+    float flutter = 0.016 * F * sin(vUv.y * 9.0 - uTime * 5.0 + vUv.x * 3.0);
+    float s = 1.0 - 0.16 * F;                                   // gathers inward as it falls
+    q.x = 0.5 + (vUv.x + flutter - 0.5) / s;
+    q.y = vUv.y - D - 0.014 * F * sin(vUv.x * 11.0 + uTime * 4.0);
+    float k = 8.0 + 16.0 * F;                                   // more folds as it crumples
+    float ph = q.x * k * 6.2831;
+    q.x += 0.010 * F * sin(ph);
+    alpha = smoothstep(-0.004, 0.004, q.y) * smoothstep(-0.004, 0.004, q.x) * smoothstep(-0.004, 0.004, 1.0 - q.x);
     float fold = 0.5 + 0.5 * cos(ph);
-    shade = 1.0 - (0.14 + 0.34 * p) * min(1.0, p * 1.8) * fold * fold;
-    shade *= mix(1.0, 0.72, smoothstep(0.86, 1.0, t) * min(1.0, p * 4.0));
-    shade += 0.07 * p * pow(1.0 - fold, 6.0);
+    shade = 1.0 - 0.32 * min(1.0, F * 2.0) * fold * fold;
+    shade += 0.06 * F * pow(1.0 - fold, 6.0);
+    shade *= 1.0 - 0.12 * F;
+    shade *= mix(0.7, 1.0, smoothstep(0.0, 0.05, q.y) + (1.0 - min(1.0, F * 6.0)));  // shadow at the falling top edge
   }
   if (alpha <= 0.0) { gl_FragColor = vec4(0.0); return; }
-  gl_FragColor = vec4(scene(clamp(q, 0.0, 1.0)) * shade, alpha);
+  vec4 sc = scene(clamp(q, 0.0, 1.0));
+  alpha *= sc.a;
+  if (alpha <= 0.0) { gl_FragColor = vec4(0.0); return; }
+  gl_FragColor = vec4(sc.rgb * shade, alpha);
 }`;
 
 function loadImage(src) {
@@ -286,9 +291,9 @@ export function initGate({ music, calm, onOpenStart, onOpened }) {
       .fromTo(burst, { opacity: 1, scale: 0.95 }, { opacity: 0, scale: 2.1, duration: 1.0, ease: 'power2.out' }, 0.05);
 
     if (calm) {
-      // reduced motion: the curtain simply parts, no falling pearls
+      // reduced motion: the curtain simply drops away, no falling pearls
       tl.add(() => onOpened && onOpened('reveal'), 0.3);
-      domPart(tl, 0.3, 1.1);
+      domFall(tl, 0.3, 1.0);
       return;
     }
 
@@ -327,36 +332,34 @@ export function initGate({ music, calm, onOpenStart, onOpened }) {
       T = Math.min(last - 0.5, 1.9);
     }
 
-    // 3. the curtain parts down the middle and gathers to both sides
+    // 3. the curtain is let go: it slips, then falls away under gravity
     tl.add(() => onOpened && onOpened('reveal'), T);
     tl.add(() => btn.remove(), T);
     if (gl) {
       tl.add(() => box.querySelector('picture').style.visibility = 'hidden', 0);
       const o = { p: 0 };
-      tl.to(o, { p: 1, duration: 2.2, ease: 'power2.inOut', onUpdate: () => (gl.open = o.p) }, T);
+      const set = () => (gl.open = o.p);
+      tl.to(o, { p: 0.025, duration: 0.3, ease: 'sine.out', onUpdate: set }, T)
+        .to(o, { p: 1, duration: 1.45, ease: 'power2.in', onUpdate: set }, T + 0.3);
     } else {
-      domPart(tl, T, 2.0);
+      domFall(tl, T, 1.4);
     }
   };
 
-  // fallback (no WebGL / reduced motion): two halves slide apart
-  function domPart(tl, at, dur) {
+  // fallback (no WebGL / reduced motion): the whole curtain drops away
+  function domFall(tl, at, dur) {
     tl.add(() => {
-      const halves = ['l', 'r'].map((side) => {
-        const h = col.cloneNode(true);
-        h.classList.add('gate__half', `gate__half--${side}`);
-        h.querySelectorAll('button, .gate__hint, .seal-ring, .seal-glow, .seal-burst, .pearl-fall, canvas').forEach((n) => n.remove());
-        if (plate) {
-          const c = plate.cloneNode(); c.getContext('2d').drawImage(plate, 0, 0);
-          c.className = 'card-img gate__plate';
-          h.querySelector('.gate__box').appendChild(c);
-        }
-        gate.appendChild(h);
-        return h;
-      });
+      const c = col.cloneNode(true);
+      c.classList.add('gate__half');
+      c.querySelectorAll('button, .gate__hint, .seal-ring, .seal-glow, .seal-burst, .pearl-fall, canvas').forEach((n) => n.remove());
+      if (plate) {
+        const pc = plate.cloneNode(); pc.getContext('2d').drawImage(plate, 0, 0);
+        pc.className = 'card-img gate__plate';
+        c.querySelector('.gate__box').appendChild(pc);
+      }
+      gate.appendChild(c);
       col.style.visibility = 'hidden';
-      gsap.to(halves[0], { xPercent: -55, duration: dur, ease: 'power2.inOut' });
-      gsap.to(halves[1], { xPercent: 55, duration: dur, ease: 'power2.inOut' });
+      gsap.to(c, { yPercent: 110, duration: dur, ease: 'power2.in' });
     }, at);
     tl.to({}, { duration: dur }, at);
   }
