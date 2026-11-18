@@ -2,7 +2,7 @@
 
 A one-page, mobile-first invitation for Majida & Umair's wedding reception.
 
-- **Opening:** the gate card is shown whole (never zoomed). Tap the seal: a gold pulse, the pearl strands come loose and the pearls fall, then the velvet curtain parts down the middle and gathers to both sides.
+- **Opening:** the gate card is shown at its natural size (never zoomed); on tall screens its own velvet and lace continue to the screen edges. Tap the seal: a gold pulse, the pearls fall from the strands, then the curtain rises like a grand theatre (Austrian) curtain, its hem lifting into scalloped swags with gold dust and warm stage light. A **Scroll down** button then appears on the invitation.
 - **Pages:** five cards stacked edge to edge in one continuous column, each shown whole: full width on phones, 520px wide on larger screens with a blurred backdrop beside it. No page fades in or zooms.
 - **Text animation:** every line of painted text writes itself in as its card scrolls into view.
 - Scratch-off date and photo, candles that light one by one, and background music.
@@ -92,7 +92,7 @@ After deploying, paste the URL into WhatsApp to check the preview (title, date l
 
 ## Motion and accessibility
 
-- **Reduced motion:** with `prefers-reduced-motion`, on low-power devices (Save-Data, ≤2 GB RAM or ≤2 cores), or with `?calm` in the URL, the site turns off sway, parallax, glints, particles and flicker. It shows the text without the writing animation, keeps a static candle glow, and the curtain simply parts without falling pearls. If the device drops below about 40 fps for around 4 seconds, sway also switches itself off.
+- **Reduced motion:** with `prefers-reduced-motion`, on low-power devices (Save-Data, ≤2 GB RAM or ≤2 cores), or with `?calm` in the URL, the site turns off sway, parallax, glints, particles and flicker. It shows the text without the writing animation, keeps a static candle glow, and the curtain simply rises away without falling pearls. If the device drops below about 40 fps for around 4 seconds, sway also switches itself off.
 - **Off-screen effects:** sections that are off screen pause all their effects.
 - **Keyboard:** the seal is a real button (Enter or Space). Each scratch card has a quiet "Reveal" button for keyboard and screen-reader users; it sits inside the card and only appears when focused, so nothing breaks the seamless column. The calendar sheet traps focus and closes with Esc.
 - **Music toggle:** it fades aside whenever painted text passes beneath it while scrolling (the text lines come from `src/data/lines.json`; buttons and the scratch areas are in `EXTRA_ZONES` in `src/data/layout.js`).

@@ -207,17 +207,26 @@ debug.checkToggle = checkToggle;
 
 // ── UM_2: text lines + scroll cue ───────────────────────────────────────────────
 const s2 = sections[0];
-const cue = $('#scroll-cue');
+const cue = $('#scroll-btn');
 const s2Ready = { p: null };
 function revealInvitation() {
   (s2Ready.p || linesReady(s2)).then(() => s2.lines.play(calm ? 0 : 0.5));
-  gsap.to(cue, { opacity: 1, duration: 0.8, delay: calm ? 1 : 3.2 });
 }
+function showScrollButton() {
+  cue.classList.add('is-on');
+  gsap.fromTo(cue, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+}
+cue.addEventListener('click', () => {
+  const target = s3.sec;
+  if (lenis) lenis.scrollTo(target, { duration: 1.6, easing: (t) => 1 - Math.pow(1 - t, 3) });
+  else target.scrollIntoView({ behavior: calm ? 'auto' : 'smooth' });
+  hideCue();
+});
 let cueHidden = false;
 function hideCue() {
   if (cueHidden) return;
   cueHidden = true;
-  gsap.to(cue, { opacity: 0, duration: 0.5, onComplete: () => cue.remove() });
+  gsap.to(cue, { opacity: 0, y: 8, duration: 0.5, onComplete: () => cue.remove() });
 }
 
 // ── Gate ─────────────────────────────────────────────────────────────────────
@@ -235,7 +244,8 @@ const gate = initGate({
       musicBtn.hidden = false;
       queueToggle();
       gsap.fromTo(musicBtn, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' });
-      const onScroll = () => { if (window.scrollY > 8) { hideCue(); window.removeEventListener('scroll', onScroll); } };
+      showScrollButton();
+      const onScroll = () => { if (window.scrollY > 60) { hideCue(); window.removeEventListener('scroll', onScroll); } };
       window.addEventListener('scroll', onScroll, { passive: true });
       debug.opened = true;
       // lazy-load the remaining cards about a screen and a half ahead of the scroll

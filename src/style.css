@@ -186,23 +186,50 @@ button { font: inherit; color: inherit; }
 .tl--rise { -webkit-mask-image: none; mask-image: none; opacity: 0; }
 .tl.is-done { -webkit-mask-image: none; mask-image: none; opacity: 1; filter: none; }
 
-/* Scroll cue */
-.scroll-cue {
-  position: absolute; z-index: 6; left: 50%; top: 91.2%; height: 8%; width: 8cqw;
-  transform: translateX(-50%); color: var(--gold); pointer-events: none;
-  display: flex; flex-direction: column; align-items: center; opacity: 0;
+/* "Scroll down" button on the invitation (plain table front, clear of all text) */
+.scroll-btn {
+  position: absolute; z-index: 8; left: 50%; top: 91.5%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-height: 44px; padding: 7px 18px 6px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(184, 145, 75, .9);
+  background: rgba(253, 244, 236, .72);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: 0 3px 14px rgba(110, 80, 30, .18), inset 0 1px 0 rgba(255, 255, 255, .7);
+  color: var(--olive-deep);
+  font-family: var(--serif); font-weight: 600; font-variant: small-caps;
+  font-size: clamp(13px, 3.4cqw, 17px); letter-spacing: .18em; line-height: 1; white-space: nowrap;
+  opacity: 0; visibility: hidden;
 }
-.scroll-cue__thread { width: 1px; height: 52%; background: linear-gradient(to bottom, rgba(184,145,75,0), rgba(184,145,75,.85)); transform-origin: top; animation: thread 2.4s ease-in-out infinite; }
-.scroll-cue__pearl {
-  width: 2.6cqw; height: 2.6cqw; min-width: 9px; min-height: 9px; border-radius: 50%; margin-top: -1px;
-  background: radial-gradient(circle at 35% 30%, #fff 0 18%, #f6eedc 45%, #cdb98f 100%);
-  box-shadow: 0 1px 2px rgba(80, 60, 20, .35);
-  animation: drop 2.4s ease-in-out infinite;
+.scroll-btn.is-on { visibility: visible; }
+.scroll-btn:focus-visible { outline: 2px solid var(--olive); outline-offset: 3px; }
+.scroll-btn__chev { width: 16px; height: 11px; fill: none; stroke: var(--gold); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.scroll-btn__chev path:first-child { animation: chev 1.8s ease-in-out infinite; }
+.scroll-btn__chev path:last-child { animation: chev 1.8s ease-in-out infinite .25s; }
+@keyframes chev { 0%, 100% { opacity: .25; transform: translateY(-1px); } 50% { opacity: 1; transform: translateY(1.5px); } }
+.scroll-btn::after {
+  content: ''; position: absolute; inset: -5px; border-radius: inherit; pointer-events: none;
+  border: 1px solid rgba(231, 207, 152, .8); animation: btn-ring 2.4s ease-out infinite;
 }
-.scroll-cue__chev { width: 4.2cqw; min-width: 16px; margin-top: 3px; animation: chev 2.4s ease-in-out infinite; }
-@keyframes thread { 0% { transform: scaleY(.2); } 45%, 100% { transform: scaleY(1); } }
-@keyframes drop { 0% { transform: translateY(-22px); opacity: 0; } 35% { opacity: 1; } 55% { transform: translateY(0); } 70% { transform: translateY(-3px); } 100% { transform: translateY(0); opacity: 1; } }
-@keyframes chev { 0%, 50% { opacity: 0; transform: translateY(-3px); } 75% { opacity: 1; transform: translateY(1px); } 100% { opacity: 0; transform: translateY(3px); } }
+@keyframes btn-ring { 0% { transform: scale(.94); opacity: .9; } 100% { transform: scale(1.18); opacity: 0; } }
+
+/* stage light and gold dust for the curtain rise */
+.gate__light {
+  position: absolute; top: 0; bottom: 0; left: 50%; width: var(--col); margin-left: calc(var(--col) / -2);
+  pointer-events: none; opacity: 0; mix-blend-mode: screen;
+  background:
+    radial-gradient(70% 38% at 50% 104%, rgba(255, 206, 128, .55), rgba(255, 206, 128, 0) 70%),
+    radial-gradient(55% 45% at 50% -8%, rgba(255, 238, 200, .45), rgba(255, 238, 200, 0) 70%),
+    radial-gradient(30% 30% at 12% 100%, rgba(255, 190, 110, .35), transparent 70%),
+    radial-gradient(30% 30% at 88% 100%, rgba(255, 190, 110, .35), transparent 70%);
+}
+.gate__dust { position: absolute; inset: 0; z-index: 4; pointer-events: none; overflow: hidden; }
+.particle--gold {
+  background:
+    radial-gradient(circle, #fff8e0 0 10%, rgba(240, 200, 110, .85) 26%, rgba(240, 200, 110, 0) 50%),
+    linear-gradient(90deg, transparent 10%, rgba(255, 230, 160, .9) 50%, transparent 90%) center / 100% 8% no-repeat,
+    linear-gradient(0deg, transparent 10%, rgba(255, 230, 160, .9) 50%, transparent 90%) center / 8% 100% no-repeat;
+}
 
 /* ── Glints, twinkles, particles ────────────────────────────────────────── */
 .glints { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
@@ -395,6 +422,6 @@ html.lenis, html.lenis body { height: auto; }
 
 /* Reduced motion: no ambient loops */
 @media (prefers-reduced-motion: reduce) {
-  .seal-ring, .scroll-cue *, .music__bars i, .pill::after, .scratch__sheen::before, .loader__pearls i { animation: none !important; }
+  .seal-ring, .scroll-btn__chev path, .scroll-btn::after, .music__bars i, .pill::after, .scratch__sheen::before, .loader__pearls i { animation: none !important; }
 }
 .calm .seal-ring, .calm .pill::after, .calm .scratch__sheen::before { animation: none !important; }

@@ -29,7 +29,7 @@ uniform vec4 uFeather;   // top, bottom, left, right feather (image uv), 0 = non
 uniform vec2 uBdScale;
 uniform float uTime;
 uniform vec2 uAmp;
-uniform float uOpen;     // 0 hanging … 1 fallen away
+uniform float uOpen;     // 0 hanging … 1 risen out of sight
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
   vec2 i = floor(p); vec2 f = fract(p);
@@ -37,59 +37,59 @@ float noise(vec2 p) {
   return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
 }
 vec4 scene(vec2 q) {
-  vec3 bd = texture2D(uBd, (q - 0.5) * uBdScale + 0.5).rgb * 0.84;
-  float bandA = 1.0 - smoothstep(0.0, 0.12, uOpen);   // the blurred band melts away once the curtain is let go
   vec2 iu = (q - uRect.xy) / (uRect.zw - uRect.xy);
-  if (iu.x < 0.0 || iu.x > 1.0 || iu.y < 0.0 || iu.y > 1.0) return vec4(bd, bandA);
-  float m = texture2D(uMask, iu).r;
+  // outside the card (spare height on tall phones) the curtain's own fabric continues:
+  // the card is mirrored at its edges, so velvet, lace and pearls run on to the screen edge
+  float outside = max(max(-iu.y, iu.y - 1.0), max(-iu.x, iu.x - 1.0));
+  vec2 cu = clamp(1.0 - abs(1.0 - abs(iu)), 0.0, 1.0);
+  float m = texture2D(uMask, cu).r;
   vec2 off = vec2(0.0);
   if (m > 0.004) {
     float t = uTime;
-    float w1 = sin(t * 1.1855 + iu.y * 3.1 + iu.x * 1.3);
-    float w2 = sin(t * 0.9378 + iu.y * 5.0 - iu.x * 2.1 + 1.7);
-    float w3 = sin(t * 1.3659 + iu.x * 4.0 + iu.y * 0.7);
-    float n = noise(vec2(iu.x * 3.0 + t * 0.17, iu.y * 3.0 - t * 0.11)) * 2.0 - 1.0;
+    float w1 = sin(t * 1.1855 + cu.y * 3.1 + cu.x * 1.3);
+    float w2 = sin(t * 0.9378 + cu.y * 5.0 - cu.x * 2.1 + 1.7);
+    float w3 = sin(t * 1.3659 + cu.x * 4.0 + cu.y * 0.7);
+    float n = noise(vec2(cu.x * 3.0 + t * 0.17, cu.y * 3.0 - t * 0.11)) * 2.0 - 1.0;
     off = vec2(0.55 * w1 + 0.30 * w2 + 0.30 * n, 0.22 * w3 + 0.18 * n) * uAmp * m;
   }
-  vec2 su = clamp(iu + off, 0.0, 1.0);
+  vec2 su = clamp(cu + off, 0.0, 1.0);
   vec3 c = mix(texture2D(uImg, su).rgb, texture2D(uPlate, su).rgb, uUsePlate);
-  float f = 1.0;
-  if (uFeather.x > 0.0) f *= smoothstep(0.0, uFeather.x, iu.y);
-  if (uFeather.y > 0.0) f *= smoothstep(0.0, uFeather.y, 1.0 - iu.y);
-  if (uFeather.z > 0.0) f *= smoothstep(0.0, uFeather.z, iu.x);
-  if (uFeather.w > 0.0) f *= smoothstep(0.0, uFeather.w, 1.0 - iu.x);
-  return vec4(mix(bd, c, f), mix(bandA, 1.0, f));
+  c *= 1.0 - 1.4 * clamp(outside, 0.0, 0.2);     // a gentle vignette toward the screen edge
+  return vec4(c, 1.0);
 }
 void main() {
   vec2 q = vUv;
   float shade = 1.0;
-  float alpha = 1.0;
   if (uOpen > 0.0) {
-    // the curtain is let go and falls: the top sags (the middle drops first), the cloth
-    // flutters and pinches in, folds deepen, and it drops away under gravity
-    float F = uOpen;
-    float cx = vUv.x - 0.5;
-    float sag = 0.10 * sin(min(F, 1.0) * 3.1416) * (1.0 - 4.0 * cx * cx);
-    float D = F * 1.15 + sag;
-    float flutter = 0.016 * F * sin(vUv.y * 9.0 - uTime * 5.0 + vUv.x * 3.0);
-    float s = 1.0 - 0.16 * F;                                   // gathers inward as it falls
-    q.x = 0.5 + (vUv.x + flutter - 0.5) / s;
-    q.y = vUv.y - D - 0.014 * F * sin(vUv.x * 11.0 + uTime * 4.0);
-    float k = 8.0 + 16.0 * F;                                   // more folds as it crumples
-    float ph = q.x * k * 6.2831;
-    q.x += 0.010 * F * sin(ph);
-    alpha = smoothstep(-0.004, 0.004, q.y) * smoothstep(-0.004, 0.004, q.x) * smoothstep(-0.004, 0.004, 1.0 - q.x);
+    // Grand theatre (Austrian) curtain rising: lift cords draw the hem up into deep
+    // scallops, the cloth gathers into ruched swags with satin highlights, the cords
+    // crease it vertically, and a soft shadow trails beneath the hem.
+    float R = uOpen;
+    float N = 4.0;                                        // lift cords across the stage
+    float fx = fract(vUv.x * N);
+    float swag = sin(3.1416 * fx);                        // 0 at a cord, 1 between cords
+    float S = 0.10 * sin(min(R, 1.0) * 3.1416) + 0.03 * R;
+    float hem = 1.0 - 1.2 * R + S * swag + 0.004 * R * sin(vUv.x * 23.0 + uTime * 2.0);
+    if (vUv.y > hem) {
+      float sh = (1.0 - smoothstep(0.0, 0.05, vUv.y - hem)) * 0.42 * min(1.0, R * 6.0);
+      gl_FragColor = vec4(0.06, 0.04, 0.0, sh);
+      return;
+    }
+    float u = vUv.y / max(hem, 0.0005);                   // 0 top … 1 hem
+    float g = min(1.0, R * 2.2);
+    float k = 3.0 + 14.0 * R;                             // gathers multiply as it rises
+    float ph = u * k * 6.2831 + swag * 2.0 * R;
+    q.y = clamp(u + 0.25 * g * sin(ph) / k, 0.0, 1.0);
+    q.x = vUv.x + 0.004 * g * sin(ph) * swag;
     float fold = 0.5 + 0.5 * cos(ph);
-    shade = 1.0 - 0.32 * min(1.0, F * 2.0) * fold * fold;
-    shade += 0.06 * F * pow(1.0 - fold, 6.0);
-    shade *= 1.0 - 0.12 * F;
-    shade *= mix(0.7, 1.0, smoothstep(0.0, 0.05, q.y) + (1.0 - min(1.0, F * 6.0)));  // shadow at the falling top edge
+    shade = 1.0 - 0.36 * g * fold * fold * (0.4 + 0.6 * u);
+    shade += 0.10 * g * pow(1.0 - fold, 8.0);             // satin sheen on each ruche
+    float cd = min(fx, 1.0 - fx);
+    shade *= 1.0 - 0.28 * g * exp(-cd * cd * 600.0);      // creases along the lift cords
+    shade *= 1.0 + 0.05 * g * swag;                       // swags belly out between cords
+    shade *= mix(0.75, 1.0, clamp(smoothstep(1.0, 0.95, u) + 1.0 - g, 0.0, 1.0));
   }
-  if (alpha <= 0.0) { gl_FragColor = vec4(0.0); return; }
-  vec4 sc = scene(clamp(q, 0.0, 1.0));
-  alpha *= sc.a;
-  if (alpha <= 0.0) { gl_FragColor = vec4(0.0); return; }
-  gl_FragColor = vec4(sc.rgb * shade, alpha);
+  gl_FragColor = vec4(scene(clamp(q, 0.0, 1.0)).rgb * shade, 1.0);
 }`;
 
 function loadImage(src) {
@@ -219,6 +219,13 @@ export function initGate({ music, calm, onOpenStart, onOpened }) {
   burst.setAttribute('aria-hidden', 'true');
   glow.setAttribute('aria-hidden', 'true');
   box.append(glow, burst);
+  // warm stage light that blooms on the invitation as the curtain rises
+  const light = Object.assign(document.createElement('div'), { className: 'gate__light' });
+  light.setAttribute('aria-hidden', 'true');
+  gate.insertBefore(light, col);
+  const dustLayer = Object.assign(document.createElement('div'), { className: 'gate__dust' });
+  dustLayer.setAttribute('aria-hidden', 'true');
+  col.appendChild(dustLayer);
 
   // hint: letters drift in one by one
   const words = hint.textContent.trim().split(' ');
@@ -291,9 +298,9 @@ export function initGate({ music, calm, onOpenStart, onOpened }) {
       .fromTo(burst, { opacity: 1, scale: 0.95 }, { opacity: 0, scale: 2.1, duration: 1.0, ease: 'power2.out' }, 0.05);
 
     if (calm) {
-      // reduced motion: the curtain simply drops away, no falling pearls
+      // reduced motion: the curtain simply rises away, no falling pearls
       tl.add(() => onOpened && onOpened('reveal'), 0.3);
-      domFall(tl, 0.3, 1.0);
+      domRise(tl, 0.3, 1.0);
       return;
     }
 
@@ -332,26 +339,35 @@ export function initGate({ music, calm, onOpenStart, onOpened }) {
       T = Math.min(last - 0.5, 1.9);
     }
 
-    // 3. the curtain is let go: it slips, then falls away under gravity
-    tl.add(() => onOpened && onOpened('reveal'), T);
+    // 3. the grand curtain rises: a small lift, a breath, then it sweeps up into swags
+    //    while warm stage light blooms and gold dust drifts from the hem
+    const RISE = 2.7, AT = T + 0.65;
     tl.add(() => btn.remove(), T);
+    tl.add(() => onOpened && onOpened('reveal'), AT + 1.0);
+    tl.fromTo(light, { opacity: 0 }, { opacity: 1, duration: 1.4, ease: 'sine.out' }, AT + 0.2)
+      .to(light, { opacity: 0, duration: 1.2, ease: 'sine.inOut' }, AT + RISE - 0.6);
     if (gl) {
       tl.add(() => box.querySelector('picture').style.visibility = 'hidden', 0);
       const o = { p: 0 };
-      const set = () => (gl.open = o.p);
-      tl.to(o, { p: 0.025, duration: 0.3, ease: 'sine.out', onUpdate: set }, T)
-        .to(o, { p: 1, duration: 1.45, ease: 'power2.in', onUpdate: set }, T + 0.3);
+      let lastDust = 0;
+      const set = () => {
+        gl.open = o.p;
+        const now = performance.now();
+        if (o.p > 0.06 && o.p < 0.9 && now - lastDust > 45) { lastDust = now; dust(o.p); }
+      };
+      tl.to(o, { p: 0.035, duration: 0.45, ease: 'sine.out', onUpdate: set }, T)
+        .to(o, { p: 1, duration: RISE, ease: 'power2.inOut', onUpdate: set }, AT);
     } else {
-      domFall(tl, T, 1.4);
+      domRise(tl, AT, 2.2);
     }
   };
 
-  // fallback (no WebGL / reduced motion): the whole curtain drops away
-  function domFall(tl, at, dur) {
+  // fallback (no WebGL / reduced motion): the whole curtain rises away
+  function domRise(tl, at, dur) {
     tl.add(() => {
       const c = col.cloneNode(true);
       c.classList.add('gate__half');
-      c.querySelectorAll('button, .gate__hint, .seal-ring, .seal-glow, .seal-burst, .pearl-fall, canvas').forEach((n) => n.remove());
+      c.querySelectorAll('button, .gate__hint, .seal-ring, .seal-glow, .seal-burst, .pearl-fall, .gate__dust, canvas').forEach((n) => n.remove());
       if (plate) {
         const pc = plate.cloneNode(); pc.getContext('2d').drawImage(plate, 0, 0);
         pc.className = 'card-img gate__plate';
@@ -359,9 +375,30 @@ export function initGate({ music, calm, onOpenStart, onOpened }) {
       }
       gate.appendChild(c);
       col.style.visibility = 'hidden';
-      gsap.to(c, { yPercent: 110, duration: dur, ease: 'power2.in' });
+      gsap.to(c, { yPercent: -105, duration: dur, ease: 'power2.inOut' });
     }, at);
     tl.to({}, { duration: dur }, at);
+  }
+
+  // gold dust shaken loose from the rising hem (same hem curve as the shader)
+  function dust(R) {
+    const H = col.clientHeight, W = col.clientWidth;
+    for (let i = 0; i < 2; i++) {
+      const x = Math.random();
+      const fx = (x * 4) % 1;
+      const S = 0.10 * Math.sin(Math.min(R, 1) * Math.PI) + 0.03 * R;
+      const hem = 1 - 1.2 * R + S * Math.sin(Math.PI * fx);
+      if (hem < 0.02 || hem > 0.99) continue;
+      const el = document.createElement('span');
+      el.className = 'particle particle--spark particle--gold';
+      dustLayer.appendChild(el);
+      const px = x * W, py = hem * H;
+      gsap.set(el, { x: px, y: py, scale: gsap.utils.random(0.4, 1.1), opacity: 0 });
+      gsap.timeline({ onComplete: () => el.remove() })
+        .to(el, { opacity: 1, duration: 0.15 })
+        .to(el, { y: py + gsap.utils.random(50, 150), x: px + gsap.utils.random(-14, 14), rotation: 90, duration: gsap.utils.random(1.0, 1.8), ease: 'sine.in' }, 0)
+        .to(el, { opacity: 0, duration: 0.6 }, '>-0.6');
+    }
   }
 
   function finish() {
